@@ -44,6 +44,7 @@ class DogsRepositoryImpl @Inject constructor(
             } catch (e: HttpException) {
                 emit(Resource.Error(e.localizedMessage ?: "Unexpected error occurred"))
             }
+            emit(Resource.Loading(false))
         }
     }
 
