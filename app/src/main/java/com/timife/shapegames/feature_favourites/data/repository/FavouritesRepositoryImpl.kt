@@ -1,7 +1,9 @@
 package com.timife.shapegames.feature_favourites.data.repository
 
 import com.timife.shapegames.common.data.local.database.DogsDao
+import com.timife.shapegames.common.data.mappers.toBreed
 import com.timife.shapegames.common.data.mappers.toDog
+import com.timife.shapegames.feature_favourites.domain.model.Breed
 import com.timife.shapegames.common.domain.model.Dog
 import com.timife.shapegames.feature_favourites.domain.repository.FavouritesRepository
 import com.timife.shapegames.common.utils.Resource
@@ -12,20 +14,33 @@ import javax.inject.Inject
 class FavouritesRepositoryImpl @Inject constructor(
     private val dao: DogsDao
 ) : FavouritesRepository {
-    override  fun getAllFavourites(): Flow<Resource<List<Dog>>> {
+    override fun getAllFavourites(): Flow<Resource<List<Dog>>> {
         return flow {
             emit(Resource.Loading(true))
             dao.getAllDogs().collect {
-                val list =  it.filter { entity->
-                   entity.isFavorite
-               }.map { filtered ->
-                   filtered.toDog()
+                val list = it.filter { entity ->
+                    entity.isFavorite
+                }.map { filtered ->
+                    filtered.toDog()
                 }
-                if(list.isNotEmpty()){
+                if (list.isNotEmpty()) {
                     emit(Resource.Success(list))
-                }else{
+                } else {
                     emit(Resource.Error("You currently have no favourite pets"))
                 }
+            }
+        }
+    }
+
+    override fun getAllFavBreeds(): Flow<List<Breed>> {
+        return flow {
+            dao.getAllDogs().collect {
+                val list = it.filter { entity ->
+                    entity.isFavorite
+                }.map { filtered ->
+                    filtered.toBreed()
+                }.toSet().toList()
+                emit(list)
             }
         }
     }

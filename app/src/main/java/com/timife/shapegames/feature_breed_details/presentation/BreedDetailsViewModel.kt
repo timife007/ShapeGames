@@ -35,6 +35,7 @@ class BreedDetailsViewModel @Inject constructor(
                     repository.toggleFav(event.dog,event.isFavourite,event.breed)
                 }
             }
+            else -> {}
         }
     }
 
