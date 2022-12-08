@@ -8,8 +8,7 @@ import com.timife.shapegames.common.data.local.entities.DogEntity
 import com.timife.shapegames.common.data.mappers.toDog
 import com.timife.shapegames.common.data.network.DogApi
 import com.timife.shapegames.common.utils.Resource
-import io.mockk.coEvery
-import io.mockk.mockk
+import io.mockk.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 
@@ -39,7 +38,7 @@ class DogsRepositoryImplTest {
     @Test
     fun getDogs() = runTest {
 
-        for(i in dogs.indices){
+        for (i in dogs.indices) {
             dao.insertDogs(dogs[i])
         }
 
@@ -48,22 +47,16 @@ class DogsRepositoryImplTest {
             assertThat((loading as Resource.Loading).isLoading).isTrue()
             val items = awaitItem()
             assertThat(items is Resource.Success).isTrue()
-            dao.getBreedDogs("chihuahua").collect{
-                    assertThat(items.data).isEqualTo(it.map { dogEntity ->
-                        dogEntity.toDog()
-                    })
-                }
+            dao.getBreedDogs("chihuahua").collect {
+                assertThat(items.data).isEqualTo(it.map { dogEntity ->
+                    dogEntity.toDog()
+                })
+            }
             val lastLoading = awaitItem()
             assertThat((lastLoading as Resource.Loading).isLoading).isFalse()
             awaitComplete()
-
         }
 
-    }
-
-    @Test
-    fun toggleFav() = runTest {
-        repository.toggleFav("chihuahua url",true,"chihuahua")
     }
 
     companion object {

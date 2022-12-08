@@ -40,9 +40,6 @@ class BreedsRepositoryImplTest {
             val remoteItems = awaitItem()
             assertThat(remoteItems is Resource.Success).isTrue()
             assertThat(remoteItems.data).isEqualTo(listOf("chihuahua","rottweiler"))
-
-            val finishLoading = awaitItem()
-            assertThat((finishLoading as Resource.Loading).isLoading).isFalse()
             awaitComplete()
         }
     }

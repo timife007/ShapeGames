@@ -23,7 +23,6 @@ class BreedsRepositoryImpl @Inject constructor(
             }catch (e:HttpException){
                 emit(Resource.Error("Unknown error occurred"))
             }
-            emit(Resource.Loading(false))
         }
     }
 }

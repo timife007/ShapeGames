@@ -29,6 +29,7 @@ class FavouritesRepositoryImpl @Inject constructor(
                     emit(Resource.Error("You currently have no favourite pets"))
                 }
             }
+            emit(Resource.Loading(false))
         }
     }
 
