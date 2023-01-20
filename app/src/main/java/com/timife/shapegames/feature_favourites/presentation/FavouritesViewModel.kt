@@ -2,9 +2,9 @@ package com.timife.shapegames.feature_favourites.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.timife.shapegames.feature_breed_details.domain.repository.DogsRepository
 import com.timife.shapegames.feature_favourites.domain.repository.FavouritesRepository
 import com.timife.shapegames.common.utils.Resource
+import com.timife.shapegames.feature_breed_details.domain.repository.DogsRepository
 import com.timife.shapegames.feature_breed_details.presentation.FavEvent
 import com.timife.shapegames.feature_favourites.presentation.states.FavoritesState
 import com.timife.shapegames.feature_favourites.presentation.states.FilterState
@@ -16,10 +16,10 @@ import javax.inject.Inject
 @HiltViewModel
 class FavouritesViewModel @Inject constructor(
     private val repository: FavouritesRepository,
-    private val detailRepo: DogsRepository
+    private val dogsRepository: DogsRepository
 ) : ViewModel() {
     private val _state = MutableStateFlow(FavoritesState())
-    val state: StateFlow<FavoritesState> = _state
+    val state =  _state.asStateFlow()
 
     private val _breedState = MutableStateFlow(FilterState())
     val breedState: StateFlow<FilterState> = _breedState
@@ -33,18 +33,18 @@ class FavouritesViewModel @Inject constructor(
         when (event) {
             is FavEvent.LikeUnlike -> {
                 viewModelScope.launch {
-                    detailRepo.toggleFav(event.dog, event.isFavourite, event.breed)
+                    dogsRepository.toggleFav(event.dog, event.isFavourite, event.breed)
                 }
             }
             is FavEvent.Filter -> {
                 viewModelScope.launch {
-                    repository.getAllFavourites().collect {
-                        it.data?.filter { dog ->
-                            dog.breed == event.breed
-                        }?.let { dogs ->
-                            _state.value = state.value.copy(favorites = dogs)
+                        repository.getAllFavourites().collect {
+                            it.data?.filter { dog ->
+                                dog.breed == event.breed
+                            }?.let { dogs ->
+                                _state.value = state.value.copy(favorites = dogs)
+                            }
                         }
-                    }
                 }
             }
         }

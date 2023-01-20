@@ -10,6 +10,8 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.key
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -22,6 +24,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.timife.shapegames.feature_breed_details.presentation.BreedDetailsViewModel
 import com.timife.shapegames.feature_breed_details.presentation.FavEvent
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalLifecycleComposeApi::class)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
@@ -32,7 +35,7 @@ fun BreedDetailsScreen(
     navController: NavController
 ) {
     val state = viewModel.detailState.collectAsStateWithLifecycle()
-
+    val check = rememberCoroutineScope()
 
     Scaffold(
         topBar = { DetailAppBar(navController) }
@@ -41,11 +44,14 @@ fun BreedDetailsScreen(
         Box(modifier = modifier.fillMaxSize()) {
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
-                modifier = Modifier.fillMaxSize().padding(5.dp),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(5.dp),
                 verticalArrangement = Arrangement.spacedBy(5.dp),
                 horizontalArrangement = Arrangement.spacedBy(5.dp)
             ) {
-                items(state.value.dogs) { dog ->
+
+                items(state.value.dogs, key = {dog -> dog.imageUrl}) { dog ->
                     DetailListItem(
                         dog = dog.imageUrl,
                         modifier = modifier,

@@ -12,9 +12,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -27,6 +25,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.timife.shapegames.feature_breed_details.presentation.FavEvent
 import com.timife.shapegames.feature_favourites.presentation.FavouritesViewModel
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalLifecycleComposeApi::class)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
@@ -38,7 +37,13 @@ fun FavouritesScreen(
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle().value
     val breedState = viewModel.breedState.collectAsStateWithLifecycle().value
-    val name =  remember { mutableStateOf("") }
+    val name = remember { mutableStateOf("")}
+
+    val scope = rememberCoroutineScope()
+    var check = rememberUpdatedState(newValue = 1)
+    LaunchedEffect(key1 = 2){
+
+    }
 
     Scaffold(
         topBar = { FavAppBar(navController) }
@@ -51,11 +56,13 @@ fun FavouritesScreen(
                 horizontalArrangement = Arrangement.spacedBy(5.dp),
                 modifier = Modifier.padding(start = 5.dp, end = 5.dp)
             ) {
-                items(breedState.breeds) { item ->
-                    BreedChip(breed = item.breed, onSelectionChange = {
-                        viewModel.onEvent(FavEvent.Filter(it))
-                        name.value = it
-                    }, isSelected = item.breed == name.value )
+                scope.launch {
+                    items(breedState.breeds) { item ->
+                        BreedChip(breed = item.breed, onSelectionChange = {
+                            viewModel.onEvent(FavEvent.Filter(it))
+                            name.value = it
+                        }, isSelected = item.breed == name.value)
+                    }
                 }
             }
 
@@ -143,7 +150,7 @@ fun FavAppBar(navController: NavController) {
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun BreedChip(breed: String,isSelected:Boolean = false, onSelectionChange: (String) -> Unit) {
+fun BreedChip(breed: String, isSelected: Boolean = false, onSelectionChange: (String) -> Unit) {
     Chip(
         onClick = { onSelectionChange(breed) },
         border = BorderStroke(
@@ -151,8 +158,8 @@ fun BreedChip(breed: String,isSelected:Boolean = false, onSelectionChange: (Stri
             Color.Gray
         ),
         colors = ChipDefaults.chipColors(
-            backgroundColor = if(isSelected) Color.Gray else MaterialTheme.colors.surface,
-            contentColor = if(isSelected) Color.White else Color.Black
+            backgroundColor = if (isSelected) Color.Gray else MaterialTheme.colors.surface,
+            contentColor = if (isSelected) Color.White else Color.Black
         )
     ) {
         Text(breed)

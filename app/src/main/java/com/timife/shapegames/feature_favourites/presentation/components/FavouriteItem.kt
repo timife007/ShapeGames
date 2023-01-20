@@ -21,7 +21,7 @@ fun FavouriteItem(
     dog: String,
     isFavourite: Boolean,
     onCheckChange: (Boolean) -> Unit,
-    breed:String
+    breed: String
 ) {
     Card {
         Column(
