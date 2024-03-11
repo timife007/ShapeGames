@@ -1,0 +1,19 @@
+# This config was automatically generated from your source code
+# Stacks detected: deps:java:.,tool:gradle:
+version: 2.1
+jobs:
+  say-hello:
+    docker:
+      - image: cimg/openjdk:17.0
+    steps:
+      - checkout
+      - run:
+          name: "Say Hello"
+          command: "echo Hello, World!"
+workflows:
+  say-hello-workflow:
+    jobs:
+      - say-hello
+    # - deploy:
+    #     requires:
+    #       - test-java
